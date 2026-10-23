@@ -1,0 +1,9 @@
+# Keep builds independent of large output directories.
+prune runs
+prune wandb
+prune logs
+
+recursive-include jaxgcrl/envs/assets *
+
+global-exclude *.pyc
+global-exclude __pycache__/*

@@ -1,0 +1,61 @@
+[project]
+name = "hypgcrl"
+version = "1.0.0"
+description = "Hyperbolic contrastive goal-conditioned reinforcement learning in JAX."
+readme = "README.md"
+authors = [{ name = "Timo Klein" }, { name = "Thomas Lang" }]
+license = "Apache-2.0"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+requires-python = ">=3.12"
+dependencies = [
+  "jax[cuda12]>=0.9.1; platform_system == 'Linux'",
+  "jax>=0.9.1; platform_system != 'Linux'",
+  "flax>=0.10.0",
+  "brax>=0.12.1",
+  "mujoco>=3.2.7",
+  "mujoco-mjx>=3.2.7",
+  "numpy>=2",
+  "tyro>=0.9.16",
+  "wandb",
+  "hyperbolix>=1.3.0,<1.3.1",
+  "ogbench>=1.2.1",
+]
+
+[project.urls]
+Repository = "https://github.com/Probabilistic-and-Interactive-ML/HypGCRL"
+Paper = "https://arxiv.org/abs/2610.20009"
+
+[project.scripts]
+jaxgcrl = "run:cli"
+jaxgcrl-offline = "jaxgcrl.offline.main:cli"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = ["ruff>=0.15.5"]
+
+[tool.setuptools]
+include-package-data = true
+py-modules = ["run"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["jaxgcrl*"]
+
+[tool.setuptools.package-data]
+"jaxgcrl.envs" = ["**/assets/*"]
+
+[tool.uv]
+# labmaze (ogbench -> dm_control) has no Python 3.13 wheels and is never imported by ogbench.
+override-dependencies = ["labmaze ; sys_platform == 'never'"]
+
+[tool.ruff]
+line-length = 127
+target-version = "py312"
+lint.select = ["E", "F", "B", "UP", "RUF"]
+lint.ignore = ["B028", "RUF013", "F722", "F821"]
+exclude = [".venv", "build/"]
+# Vendored OGBench code is kept identical to the reference.
+lint.per-file-ignores = { "jaxgcrl/offline/datasets.py" = ["B023"], "jaxgcrl/offline/evaluation.py" = ["B008"] }
